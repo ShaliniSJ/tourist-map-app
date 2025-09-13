@@ -391,8 +391,85 @@ export const regionColors = {
   south: '#e74c3c',
   east: '#27ae60',
   west: '#f39c12',
-  meghalaya: '#8e44ad'
+  meghalaya: '#8e44ad',
+  manipur: '#e67e22'
 };
+
+// Manipur specific tourist spots
+export const manipurTouristSpots = [
+  { 
+    id: 41, 
+    name: "Loktak Lake", 
+    coords: [93.8333, 24.5333], 
+    region: "manipur", 
+    category: "nature",
+    description: "Largest freshwater lake in Northeast India with floating islands",
+    rating: 4.7
+  },
+  { 
+    id: 42, 
+    name: "Imphal", 
+    coords: [93.9500, 24.8167], 
+    region: "manipur", 
+    category: "city",
+    description: "Capital city of Manipur",
+    rating: 4.2
+  },
+  { 
+    id: 43, 
+    name: "Kangla Fort", 
+    coords: [93.9500, 24.8167], 
+    region: "manipur", 
+    category: "fort",
+    description: "Historic fort and palace complex",
+    rating: 4.3
+  },
+  { 
+    id: 44, 
+    name: "Keibul Lamjao National Park", 
+    coords: [93.8333, 24.5333], 
+    region: "manipur", 
+    category: "nature",
+    description: "Only floating national park in the world",
+    rating: 4.6
+  },
+  { 
+    id: 45, 
+    name: "Shree Govindajee Temple", 
+    coords: [93.9500, 24.8167], 
+    region: "manipur", 
+    category: "temple",
+    description: "Famous Hindu temple in Imphal",
+    rating: 4.4
+  },
+  { 
+    id: 46, 
+    name: "Manipur State Museum", 
+    coords: [93.9500, 24.8167], 
+    region: "manipur", 
+    category: "museum",
+    description: "Museum showcasing Manipur's culture and history",
+    rating: 4.1
+  },
+  { 
+    id: 47, 
+    name: "Khonghampat Orchidarium", 
+    coords: [93.9000, 24.8000], 
+    region: "manipur", 
+    category: "nature",
+    description: "Orchid conservation center",
+    rating: 4.3
+  },
+  { 
+    id: 48, 
+    name: "Sekta Archaeological Living Museum", 
+    coords: [93.8500, 24.7500], 
+    region: "manipur", 
+    category: "museum",
+    description: "Living museum of Manipur's archaeological heritage",
+    rating: 4.2
+  }
+];
 
 // Meghalaya specific tourist spots
 export const meghalayaTouristSpots = [

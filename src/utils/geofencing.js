@@ -12,6 +12,9 @@ export const INDIA_BOUNDS = {
 // Meghalaya specific bounding box
 export const MEGHALAYA_BOUNDS = [89.61, 24.58, 92.51, 26.07]; // [minLng, minLat, maxLng, maxLat]
 
+// Manipur specific bounding box
+export const MANIPUR_BOUNDS = [93.73, 23.83, 94.78, 25.68]; // [minLng, minLat, maxLng, maxLat]
+
 // Hexagon size in kilometers
 export const HEXAGON_SIZE = 50;
 
@@ -225,6 +228,149 @@ export const createMeghalayaGeofence = (hexagons, minDensity = 1) => {
     console.error('Error creating Meghalaya geofence:', error);
     return turf.featureCollection([]);
   }
+};
+
+/**
+ * Create visible area polygons for Manipur using Turf.js
+ * @param {Array} touristSpots - Array of Manipur tourist spots
+ * @param {number} radiusKm - Radius in kilometers for each area
+ * @returns {Object} GeoJSON FeatureCollection with visible areas
+ */
+export const createManipurAreas = (touristSpots = [], radiusKm = 15) => {
+  try {
+    const areas = touristSpots.map((spot, index) => {
+      // Create a circle around each tourist spot
+      const center = turf.point(spot.coords);
+      const circle = turf.circle(center, radiusKm, { 
+        units: 'kilometers',
+        steps: 64 // More steps for smoother circle
+      });
+      
+      // Calculate area using Turf.js area function
+      const areaInSquareMeters = turf.area(circle);
+      const areaInSquareKm = areaInSquareMeters / 1000000;
+      
+      return {
+        type: 'Feature',
+        id: `manipur-area-${index}`,
+        geometry: circle.geometry,
+        properties: {
+          name: spot.name,
+          description: spot.description,
+          category: spot.category,
+          rating: spot.rating,
+          center: spot.coords,
+          radius: radiusKm,
+          area: Math.round(areaInSquareKm * 100) / 100, // Round to 2 decimal places
+          region: 'manipur',
+          type: 'tourist-area',
+          color: getCategoryColor(spot.category)
+        }
+      };
+    });
+    
+    return turf.featureCollection(areas);
+  } catch (error) {
+    console.error('Error creating Manipur areas:', error);
+    return turf.featureCollection([]);
+  }
+};
+
+/**
+ * Create a large area polygon covering Manipur state
+ * @param {Array} touristSpots - Array of Manipur tourist spots
+ * @returns {Object} GeoJSON FeatureCollection with state area
+ */
+export const createManipurStateArea = (touristSpots = []) => {
+  try {
+    // Create a polygon that covers the Manipur state bounds
+    const statePolygon = turf.bboxPolygon(MANIPUR_BOUNDS);
+    
+    // Calculate total area
+    const areaInSquareMeters = turf.area(statePolygon);
+    const areaInSquareKm = areaInSquareMeters / 1000000;
+    
+    // Calculate center point
+    const center = turf.centroid(statePolygon);
+    
+    return turf.featureCollection([{
+      type: 'Feature',
+      id: 'manipur-state',
+      geometry: statePolygon.geometry,
+      properties: {
+        name: 'Manipur State',
+        description: 'Complete state boundary of Manipur',
+        area: Math.round(areaInSquareKm * 100) / 100,
+        center: center.geometry.coordinates,
+        region: 'manipur',
+        type: 'state-boundary',
+        touristSpotsCount: touristSpots.length,
+        color: '#e67e22'
+      }
+    }]);
+  } catch (error) {
+    console.error('Error creating Manipur state area:', error);
+    return turf.featureCollection([]);
+  }
+};
+
+/**
+ * Create buffer areas around tourist spots
+ * @param {Array} touristSpots - Array of tourist spots
+ * @param {number} bufferKm - Buffer distance in kilometers
+ * @returns {Object} GeoJSON FeatureCollection with buffer areas
+ */
+export const createBufferAreas = (touristSpots = [], bufferKm = 20) => {
+  try {
+    const bufferAreas = touristSpots.map((spot, index) => {
+      const point = turf.point(spot.coords);
+      const buffer = turf.buffer(point, bufferKm, { units: 'kilometers' });
+      
+      const areaInSquareMeters = turf.area(buffer);
+      const areaInSquareKm = areaInSquareMeters / 1000000;
+      
+      return {
+        type: 'Feature',
+        id: `buffer-area-${index}`,
+        geometry: buffer.geometry,
+        properties: {
+          name: `${spot.name} Buffer Zone`,
+          description: `${bufferKm}km buffer around ${spot.name}`,
+          center: spot.coords,
+          bufferDistance: bufferKm,
+          area: Math.round(areaInSquareKm * 100) / 100,
+          region: 'manipur',
+          type: 'buffer-zone',
+          color: '#f39c12'
+        }
+      };
+    });
+    
+    return turf.featureCollection(bufferAreas);
+  } catch (error) {
+    console.error('Error creating buffer areas:', error);
+    return turf.featureCollection([]);
+  }
+};
+
+/**
+ * Get color for category
+ * @param {string} category - Tourist spot category
+ * @returns {string} Hex color code
+ */
+const getCategoryColor = (category) => {
+  const colors = {
+    nature: '#27ae60',
+    city: '#34495e',
+    fort: '#f39c12',
+    temple: '#8e44ad',
+    museum: '#e74c3c',
+    beach: '#3498db',
+    cave: '#95a5a6',
+    memorial: '#e67e22',
+    ruins: '#7f8c8d'
+  };
+  return colors[category] || '#95a5a6';
 };
 
 /**
